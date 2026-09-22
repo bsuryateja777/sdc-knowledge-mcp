@@ -30,7 +30,7 @@ jobs:
       - name: Deploy to Function App
         uses: Azure/functions-action@v1
         with:
-          app-name: func-sdc-playground
+          app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           package: dist/ingestion_function.zip
           sku: flexconsumption
           remote-build: true

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import requests
 
@@ -13,8 +13,14 @@ _EXPAND = "body.storage,version,space,ancestors,metadata.labels"
 
 def _to_cql_datetime(iso_str: str) -> str:
     """Confluence CQL wants "yyyy-MM-dd HH:mm"; our stored last_modified
-    values are ISO-8601 (e.g. "2026-09-18T10:47:29Z")."""
-    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+    values are ISO-8601 (e.g. "2026-09-18T10:47:29Z") with second precision.
+
+    Rounds up to the next minute before truncating so the most-recently
+    -indexed page's own minute is excluded from the next incremental query --
+    without this, `lastModified > "<its minute>:00"` still matches that page's
+    real timestamp (which has non-zero seconds), causing it to be re-crawled
+    on every single incremental run forever."""
+    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00")) + timedelta(minutes=1)
     return dt.strftime("%Y-%m-%d %H:%M")
 
 
