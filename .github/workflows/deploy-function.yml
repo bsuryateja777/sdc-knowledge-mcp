@@ -1,0 +1,38 @@
+name: Deploy Ingestion Function App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Build Function App zip
+        shell: pwsh
+        run: |
+          scripts\build_function_zip.ps1
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Function App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.FUNCTION_APP_NAME }}
+          package: dist/ingestion_function.zip
+
+      - name: Azure Logout
+        run: az logout
+        if: always()
