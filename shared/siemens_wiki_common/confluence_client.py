@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import requests
 
@@ -11,24 +12,37 @@ from siemens_wiki_common.models import ConfluencePage
 _EXPAND = "body.storage,version,space,ancestors,metadata.labels"
 
 
-def _to_cql_datetime(iso_str: str) -> str:
-    """Confluence CQL wants "yyyy-MM-dd HH:mm"; our stored last_modified
-    values are ISO-8601 (e.g. "2026-09-18T10:47:29Z") with second precision.
+def _to_cql_datetime(iso_str: str, server_timezone: str = "UTC") -> str:
+    """Confluence CQL wants a bare "yyyy-MM-dd HH:mm" literal with no offset,
+    which Confluence evaluates in the *target instance's own* timezone (e.g.
+    wiki.siemens.com runs Europe/Berlin/CEST) -- not UTC. Our stored
+    last_modified values are UTC ISO-8601 (e.g. "2026-09-18T10:47:29Z"), so
+    this must convert into server_timezone before truncating, or the cutoff
+    silently drifts by the UTC offset (confirmed: ~2h for wiki.siemens.com,
+    enough to permanently re-match the most-recent page on every run).
 
-    Rounds up to the next minute before truncating so the most-recently
-    -indexed page's own minute is excluded from the next incremental query --
-    without this, `lastModified > "<its minute>:00"` still matches that page's
-    real timestamp (which has non-zero seconds), causing it to be re-crawled
-    on every single incremental run forever."""
-    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00")) + timedelta(minutes=1)
+    Also rounds up to the next minute before truncating so that page's own
+    (sub-minute-precision) timestamp is excluded from the next incremental
+    query -- otherwise `lastModified > "<its minute>:00"` still matches it
+    forever, since the real timestamp has non-zero seconds within that
+    minute."""
+    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+    dt = dt.astimezone(ZoneInfo(server_timezone)) + timedelta(minutes=1)
     return dt.strftime("%Y-%m-%d %H:%M")
 
 
 class ConfluenceClient:
-    def __init__(self, base_url: str, auth: ConfluenceAuthProvider, timeout: int = 30):
+    def __init__(
+        self,
+        base_url: str,
+        auth: ConfluenceAuthProvider,
+        timeout: int = 30,
+        cql_timezone: str = "UTC",
+    ):
         self._base_url = base_url.rstrip("/")
         self._auth = auth
         self._timeout = timeout
+        self._cql_timezone = cql_timezone
 
     def _get(self, path: str, params: dict) -> dict:
         url = f"{self._base_url}{path}"
@@ -58,7 +72,7 @@ class ConfluenceClient:
         start = 0
         cql = f'space="{space_key}" AND type=page AND ancestor={root_page_id}'
         if modified_since:
-            cql += f' AND lastModified > "{_to_cql_datetime(modified_since)}"'
+            cql += f' AND lastModified > "{_to_cql_datetime(modified_since, self._cql_timezone)}"'
         while True:
             data = self._get(
                 "/rest/api/content/search",

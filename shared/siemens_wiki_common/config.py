@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     wiki_auth_strategy: str = "cookie"  # cookie | pat
     wiki_jsessionid: str = ""
     wiki_pat: str = ""
+    # wiki.siemens.com evaluates CQL date literals (no offset) in its own
+    # server-local timezone (confirmed CEST/Europe-Berlin), not UTC -- see
+    # ConfluenceClient._to_cql_datetime. Getting this wrong means the
+    # incremental-sync cutoff is silently off by the timezone's UTC offset,
+    # causing recently-modified pages to be re-crawled every run forever.
+    wiki_cql_timezone: str = "Europe/Berlin"
 
     # Second, independent Confluence Data Center instance (DAAI internal ops).
     # Different base URL, different SSO (EntraID vs Kerberos), own session
@@ -28,6 +34,7 @@ class Settings(BaseSettings):
     confluence_jsessionid: str = ""
     confluence_pat: str = ""
     confluence_search_index: str = "sdc-ops-l1-index"
+    confluence_cql_timezone: str = "UTC"
 
     azure_search_endpoint: str = ""
     azure_search_key: str = ""
@@ -63,6 +70,7 @@ class ConfluenceInstance:
     jsessionid: str
     pat: str
     index_name: str
+    cql_timezone: str = "UTC"
 
 
 def get_instance(settings: Settings, name: str) -> ConfluenceInstance:
@@ -76,6 +84,7 @@ def get_instance(settings: Settings, name: str) -> ConfluenceInstance:
             jsessionid=settings.wiki_jsessionid,
             pat=settings.wiki_pat,
             index_name=settings.azure_search_index,
+            cql_timezone=settings.wiki_cql_timezone,
         )
     if name == "confluence":
         return ConfluenceInstance(
@@ -85,6 +94,7 @@ def get_instance(settings: Settings, name: str) -> ConfluenceInstance:
             jsessionid=settings.confluence_jsessionid,
             pat=settings.confluence_pat,
             index_name=settings.confluence_search_index,
+            cql_timezone=settings.confluence_cql_timezone,
         )
     raise ValueError(f"Unknown Confluence instance: {name!r} (expected 'wiki' or 'confluence')")
 

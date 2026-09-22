@@ -58,7 +58,9 @@ def run_ingestion(
     for instance_name, group in groupby(sorted_sources, key=lambda s: s.instance):
         instance = get_instance(settings, instance_name)
         auth = get_auth_provider(instance)
-        client = ConfluenceClient(base_url=instance.base_url, auth=auth)
+        client = ConfluenceClient(
+            base_url=instance.base_url, auth=auth, cql_timezone=instance.cql_timezone
+        )
         index = None if dry_run else SearchIndexClient(settings, index_name=instance.index_name)
 
         for source in group:
