@@ -32,6 +32,11 @@ def search_siemens_wiki(query: str, top_k: int = 5) -> dict:
     greater than 1 and this chunk isn't enough context, call
     get_full_page(page_id) to get that page's complete content.
 
+    IMPORTANT: when citing source_url to the user, paste it EXACTLY as
+    returned -- do not shorten, truncate, or drop the title slug at the end.
+    These wiki URLs 404 without the full path; a trimmed-looking URL is a
+    broken URL here, not a cosmetic simplification.
+
     Args:
         query: Natural language search query
         top_k: Number of results to return (default 5)
@@ -60,6 +65,11 @@ def search_sdc_ops_confluence(query: str, top_k: int = 5) -> dict:
     Returns {"results": [...], "sources": [...]} in the same shape as
     search_siemens_wiki, including page_id/chunk_index/total_chunks_in_page
     per result -- call get_full_page(page_id) if a chunk isn't enough.
+
+    IMPORTANT: when citing source_url to the user, paste it EXACTLY as
+    returned -- do not shorten, truncate, or drop the title slug at the end.
+    These Confluence URLs 404 without the full path; a trimmed-looking URL is
+    a broken URL here, not a cosmetic simplification.
 
     Args:
         query: Natural language search query
