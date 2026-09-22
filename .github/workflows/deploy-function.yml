@@ -32,6 +32,8 @@ jobs:
         with:
           app-name: func-sdc-playground
           package: dist/ingestion_function.zip
+          sku: flexconsumption
+          remote-build: true
 
       - name: Azure Logout
         run: az logout
