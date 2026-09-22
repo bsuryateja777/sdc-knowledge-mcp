@@ -28,7 +28,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Function App
-        uses: azure/webapps-deploy@v2
+        uses: Azure/functions-action@v1
         with:
           app-name: func-sdc-playground
           package: dist/ingestion_function.zip
