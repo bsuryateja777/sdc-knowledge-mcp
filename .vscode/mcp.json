@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "siemens-wiki": {
+      "type": "stdio",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["-m", "mcp_server.stdio_entry"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}

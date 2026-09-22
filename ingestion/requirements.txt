@@ -1,0 +1,9 @@
+azure-functions>=1.21
+requests>=2.31
+beautifulsoup4>=4.12
+pyyaml>=6.0
+pydantic>=2.6
+pydantic-settings>=2.2
+azure-search-documents>=11.5.1
+azure-core>=1.30
+openai>=1.14

@@ -1,0 +1,23 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "INGESTION_INSTANCE": "",
+    "WIKI_BASE_URL": "https://wiki.siemens.com",
+    "WIKI_AUTH_STRATEGY": "cookie",
+    "WIKI_JSESSIONID": "<paste-fresh-cookie-value>",
+    "WIKI_PAT": "",
+    "CONFLUENCE_BASE_URL": "https://confluence.ct.daai.siemens.cloud",
+    "CONFLUENCE_AUTH_STRATEGY": "cookie",
+    "CONFLUENCE_JSESSIONID": "<paste-fresh-cookie-value>",
+    "CONFLUENCE_PAT": "",
+    "CONFLUENCE_SEARCH_INDEX": "sdc-ops-l1-index",
+    "AZURE_SEARCH_ENDPOINT": "https://<your-search-service>.search.windows.net",
+    "AZURE_SEARCH_KEY": "<admin-key>",
+    "AZURE_SEARCH_INDEX": "siemens-wiki-index",
+    "AI_FOUNDRY_ENDPOINT": "https://<your-foundry-project>.services.ai.azure.com",
+    "AI_FOUNDRY_KEY": "<key>",
+    "AI_FOUNDRY_EMBED_DEPLOYMENT": "text-embedding-3-small"
+  }
+}

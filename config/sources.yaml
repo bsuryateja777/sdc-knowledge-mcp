@@ -1,0 +1,21 @@
+sources:
+  - instance: wiki
+    space_key: en
+    root_page_id: "295931756"
+    label: "SDC root"
+  - instance: wiki
+    space_key: en
+    root_page_id: "575068159"
+    label: "ai attack Homepage"
+  - instance: confluence
+    space_key: SDCOPSL1
+    root_page_id: "501414852"
+    label: "First Line Support (DAAI Confluence L1 Ops runbooks)"
+  - instance: confluence
+    space_key: AIAATCK1
+    root_page_id: "482683838"
+    label: "Aiattack on Azure Home"
+  - instance: confluence
+    space_key: NEO4J
+    root_page_id: "451092196"
+    label: "Neo4J Home"
