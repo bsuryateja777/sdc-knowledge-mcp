@@ -30,7 +30,7 @@ jobs:
       - name: Deploy to Function App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ secrets.FUNCTION_APP_NAME }}
+          app-name: func-sdc-playground
           package: dist/ingestion_function.zip
 
       - name: Azure Logout
