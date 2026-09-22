@@ -13,10 +13,16 @@ mcp = MCPServer("siemens-wiki-search")
 def search_siemens_wiki(query: str, top_k: int = 5) -> dict:
     """Search the Siemens Wikisphere (wiki.siemens.com) knowledge base.
 
-    Covers SDC product documentation (SDC Marketplace, Data Products,
-    Snowflake, dbt, etc.) and the ai:attack Azure platform's public wiki
-    pages. Does NOT cover DAAI internal ops/support runbooks -- use
-    search_sdc_ops_confluence for those.
+    Covers SDC product/end-user documentation: how to order/create SDC
+    resources (SDC Projects, Data Products, SDC Marketplace), Snowflake, dbt,
+    and the ai:attack Azure platform's public wiki pages. This and
+    search_sdc_ops_confluence (DAAI internal L1 support/ops runbooks) often
+    have COMPLEMENTARY coverage of the same topic -- e.g. "how do I order an
+    SDC project" is answered here from the requester's side, while the ops
+    index has the support team's internal process for the same request. For
+    "how do I order/create/get X" or general how-to questions, check BOTH
+    tools rather than assuming one is authoritative; don't skip this one just
+    because a question also sounds operational.
 
     Returns {"results": [...], "sources": [...]} -- results are the matched
     page chunks (title, content, page_id, chunk_index, total_chunks_in_page,
@@ -38,12 +44,18 @@ def search_sdc_ops_confluence(query: str, top_k: int = 5) -> dict:
     """Search the DAAI internal Confluence knowledge base
     (confluence.ct.daai.siemens.cloud).
 
-    Covers SDC Operations L1 Support runbooks (per-platform troubleshooting:
-    Snowflake, PowerBI, Neo4j, ERP Data Ingest, etc.), the Aiattack on Azure
-    platform's internal ops docs (including concrete admin/config guides like
-    enabling Azure SQL auto-pause), and Neo4j service operations. Use this for
-    "how do I configure/enable/troubleshoot X" operational questions -- this
-    index has hands-on admin guides that the public wiki does not.
+    Covers SDC Operations L1 Support runbooks (per-platform troubleshooting
+    and internal ordering/provisioning process: Snowflake, PowerBI, Neo4j,
+    ERP Data Ingest, SDC Project/Standard Account requests, etc.), the
+    Aiattack on Azure platform's internal ops docs (including concrete
+    admin/config guides like enabling Azure SQL auto-pause), and Neo4j
+    service operations. This and search_siemens_wiki (public SDC product
+    docs) often have COMPLEMENTARY coverage of the same topic -- e.g. "how do
+    I order an SDC project" is answered here from the support team's internal
+    process side, while the wiki has the requester-facing steps. For "how do
+    I order/create/get X" or general how-to questions, check BOTH tools
+    rather than assuming this one alone is enough, even though the phrasing
+    may sound operational.
 
     Returns {"results": [...], "sources": [...]} in the same shape as
     search_siemens_wiki, including page_id/chunk_index/total_chunks_in_page
